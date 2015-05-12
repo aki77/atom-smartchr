@@ -1,0 +1,21 @@
+'.source.php':
+  'smartchr':
+    'chrs': [
+      {
+        chr: '=',
+        candidates: [' = ', ' == ', ' === ', '=']
+      }
+    ]
+
+'.source.coffee':
+  'smartchr':
+    'chrs': [
+      {
+        chr: '=',
+        candidates: [' = ', '=', ' == ', ' === ']
+      }
+      {
+        chr: '>',
+        candidates: [' -> ', ' => ', ' > ', '>']
+      }
+    ]

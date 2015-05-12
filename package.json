@@ -1,0 +1,13 @@
+{
+  "name": "smartchr",
+  "main": "./lib/main",
+  "version": "0.0.1",
+  "description": "Like emacs-smartchr",
+  "repository": "https://github.com/aki77/atom-smartchr",
+  "license": "MIT",
+  "engines": {
+    "atom": ">=0.174.0 <2.0.0"
+  },
+  "dependencies": {
+  }
+}
