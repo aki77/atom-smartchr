@@ -58,11 +58,10 @@ class Smartchr
     @lastChr = text
     cancel()
     @cursorPositionSubscription = @editor.onDidChangeCursorPosition(@cursorMoved)
-    @editorSubscriptions.add @cursorPositionSubscription
+    @editorSubscriptions.add(@cursorPositionSubscription)
 
-  insert: (text) ->
+  insert: (chr) ->
     @active = true
-    chr = text
     candidates = @characters[chr]
     @storeCount = if chr is @lastChr then @storeCount + 1 else 0
 
@@ -76,7 +75,6 @@ class Smartchr
       @editor.insertText candidates[@storeCount % candidates.length]
 
     @active = false
-    true
 
   isTargetChr: (chr) =>
     return false if @active

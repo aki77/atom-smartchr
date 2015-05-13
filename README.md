@@ -1,5 +1,50 @@
 # smartchr package
 
-A short description of your package.
+Insert several candidates with a single key
 
-![A screenshot of your package](https://f.cloud.github.com/assets/69169/2290250/c35d867a-a017-11e3-86be-cd7c5bf3ff9b.gif)
+![A screenshot of your package](http://i.gyazo.com/d65638fee9e3854443b4846287f5d9b0.gif)
+
+Inspired by [smartchr.el](https://github.com/imakado/emacs-smartchr/).
+
+## Settings
+
+edit `~/.atom/config.cson`
+
+```coffeescript
+'.source.coffee':
+  'smartchr':
+    'chrs': [
+      {
+        chr: '=',
+        candidates: [' = ', ' == ', '=']
+      }
+      {
+        chr: '>',
+        candidates: [' -> ', ' => ', ' > ', ' >= ', '>']
+      }
+      {
+        chr: '<',
+        candidates: [' < ', ' <= ', '<']
+      }
+      {
+        chr: ',',
+        candidates: [', ', ',']
+      }
+      {
+        chr: '+',
+        candidates: [' + ', '+']
+      }
+      {
+        chr: '-',
+        candidates: [' - ', '-']
+      }
+      {
+        chr: '&',
+        candidates: [' && ', '&']
+      }
+      {
+        chr: '|',
+        candidates: [' || ', '|']
+      }
+    ]
+```

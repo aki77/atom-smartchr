@@ -22,5 +22,5 @@ module.exports =
     @smartchr = new Smartchr
 
   deactivate: ->
-    @smartchr?.dispose()
+    @smartchr?.destroy()
     @smartchr = null
