@@ -4,7 +4,8 @@ module.exports =
 class Smartchr
   active: false
   characters: {}
-  editor: null
+  cancelSubscription: null
+  cursorPositionSubscription: null
   editorSubscriptions: null
   lastChr: null
   storeCount: 0
@@ -14,30 +15,32 @@ class Smartchr
     @handleEvents()
 
   destroy: ->
+    @reset()
     @subscriptions.dispose()
     @subscriptions = null
     @editorSubscriptions?.dispose()
     @editorSubscriptions = null
 
   handleEvents: =>
-    @subscriptions.add atom.workspace.observeActivePaneItem(@updateCurrentEditor)
+    @subscriptions.add(atom.workspace.observeActivePaneItem(@updateCurrentEditor))
 
   updateCurrentEditor: (currentPaneItem) =>
     return if not currentPaneItem? or currentPaneItem is @editor
 
+    @reset()
     @editorSubscriptions?.dispose()
     @editorSubscriptions = null
 
     # Stop tracking editor
     @editor = null
+    @editorView = null
     @characters = {}
-    @lastChr = null
-    @active = false
 
     return unless @paneItemIsValid(currentPaneItem)
 
     # Track the new editor
     @editor = currentPaneItem
+    @editorView = atom.views.getView(@editor)
 
     # Subscribe to editor events:
     @editorSubscriptions = new CompositeDisposable
@@ -49,35 +52,38 @@ class Smartchr
     return paneItem instanceof TextEditor
 
   onInsertText: ({text, cancel}) =>
-    @cursorPositionSubscription?.dispose()
-    unless @isTargetChr(text)
-      @lastChr = null
-      return
+    return if @insertFlag
+    return @reset() unless @isTargetChr(text)
 
-    @insert(text)
-    @lastChr = text
+    @insertCandidate(text)
     cancel()
-    @cursorPositionSubscription = @editor.onDidChangeCursorPosition(@cursorMoved)
-    @editorSubscriptions.add(@cursorPositionSubscription)
 
-  insert: (chr) ->
-    @active = true
+    @cursorPositionSubscription ?= @editor.onDidChangeCursorPosition(@reset)
+
+  insertCandidate: (chr) ->
     candidates = @characters[chr]
     @storeCount = if chr is @lastChr then @storeCount + 1 else 0
+    @lastChr = chr
 
-    @editor.transact =>
+    @transact =>
       if @storeCount > 0
         beforeText = candidates[(@storeCount - 1) % candidates.length]
         @editor.mutateSelectedText (selection) ->
           selection.selectLeft(beforeText.length)
           selection.delete()
 
-      @editor.insertText candidates[@storeCount % candidates.length]
+      @editor.insertText(candidates[@storeCount % candidates.length])
 
-    @active = false
+    @cancelSubscription ?= atom.commands.add('atom-text-editor', 'core:cancel', @cancel)
+
+  transact: (fun) =>
+    @cursorPositionSubscription?.dispose()
+    @cursorPositionSubscription = null
+    @insertFlag = true
+    @editor.transact(fun)
+    @insertFlag = false
 
   isTargetChr: (chr) =>
-    return false if @active
     return false unless chr
     return false unless chr.length is 1
     return false if @editor.hasMultipleCursors()
@@ -85,10 +91,26 @@ class Smartchr
 
     true
 
-  cursorMoved: =>
+  cancel: =>
+    candidates = @characters[@lastChr]
+    beforeText = candidates[(@storeCount) % candidates.length]
+    chr = @lastChr
+
+    @reset()
+
+    @transact =>
+      @editor.mutateSelectedText (selection) ->
+        selection.selectLeft(beforeText.length)
+        selection.delete()
+      @editor.insertText(chr)
+
+  reset: =>
+    return unless @lastChr?
     @lastChr = null
-    @cursorPositionSubscription.dispose()
-    @editorSubscriptions.remove @cursorPositionSubscription
+    @cancelSubscription?.dispose()
+    @cancelSubscription = null
+    @cursorPositionSubscription?.dispose()
+    @cursorPositionSubscription = null
 
   updateCharacters: (chrs) =>
     chrs.forEach (obj) =>
