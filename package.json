@@ -1,7 +1,7 @@
 {
   "name": "smartchr",
   "main": "./lib/main",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Insert several candidates with a single key",
   "repository": "https://github.com/aki77/atom-smartchr",
   "license": "MIT",
