@@ -74,7 +74,7 @@ class Smartchr
 
       @editor.insertText(candidates[@storeCount % candidates.length])
 
-    @cancelSubscription ?= atom.commands.add('atom-text-editor', 'core:cancel', @cancel)
+    @cancelSubscription ?= atom.commands.add(@editorView, 'core:cancel', @cancel)
 
   transact: (fun) =>
     @cursorPositionSubscription?.dispose()
