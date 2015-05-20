@@ -15,6 +15,11 @@ module.exports =
             type: 'array'
             items:
               type: 'string'
+    scopeBlacklist:
+      type: 'array'
+      default: ['comment', 'string']
+      items:
+        type: 'string'
 
   smartchr: null
 

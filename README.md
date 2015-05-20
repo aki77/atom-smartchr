@@ -11,6 +11,9 @@ Inspired by [smartchr.el](https://github.com/imakado/emacs-smartchr/).
 edit `~/.atom/config.cson`
 
 ```coffeescript
+'*':
+  'smartchr':
+    'scopeBlacklist': ['comment.*', 'string.*']
 '.source.coffee':
   'smartchr':
     'chrs': [

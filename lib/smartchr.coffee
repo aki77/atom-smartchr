@@ -1,4 +1,5 @@
 {CompositeDisposable, TextEditor} = require 'atom'
+{ScopeSelector} = require 'first-mate'
 
 module.exports =
 class Smartchr
@@ -45,7 +46,12 @@ class Smartchr
     # Subscribe to editor events:
     @editorSubscriptions = new CompositeDisposable
     @editorSubscriptions.add @editor.onWillInsertText(@onInsertText)
-    @editorSubscriptions.add atom.config.observe 'smartchr.chrs', scope: @editor.getRootScopeDescriptor(), @updateCharacters
+
+    options =
+      scope: @editor.getRootScopeDescriptor()
+
+    @editorSubscriptions.add atom.config.observe 'smartchr.chrs', options, @updateCharacters
+    @editorSubscriptions.add atom.config.observe 'smartchr.scopeBlacklist', options, @updateScopeBlacklist
 
   paneItemIsValid: (paneItem) ->
     return false unless paneItem?
@@ -88,8 +94,16 @@ class Smartchr
     return false unless chr.length is 1
     return false if @editor.hasMultipleCursors()
     return false unless @characters.hasOwnProperty(chr)
-
+    return false if @scopeSelector?.matches(@getAfterInsertScopes(chr))
     true
+
+  getAfterInsertScopes: (chr) =>
+    scopes = []
+    @transact =>
+      @editor.insertText(chr)
+      scopes = @editor.getLastCursor().getScopeDescriptor().getScopesArray()
+      @editor.abortTransaction()
+    scopes
 
   cancel: =>
     candidates = @characters[@lastChr]
@@ -115,3 +129,6 @@ class Smartchr
   updateCharacters: (chrs) =>
     chrs.forEach (obj) =>
       @characters[obj.chr] = obj.candidates
+
+  updateScopeBlacklist: (scopes) =>
+    @scopeSelector = new ScopeSelector(scopes.join(' | '))
