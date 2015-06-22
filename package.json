@@ -9,6 +9,6 @@
     "atom": ">=0.174.0 <2.0.0"
   },
   "dependencies": {
-    "first-mate": "^3.0"
+    "selector-kit": "^0.1.0"
   }
 }

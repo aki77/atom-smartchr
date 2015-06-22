@@ -1,3 +1,6 @@
+## 0.3.1
+* Replace first-mate with selector-kit
+
 ## 0.3.0
 * Added scopeBlacklist setting
 

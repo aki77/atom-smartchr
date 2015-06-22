@@ -1,5 +1,6 @@
 {CompositeDisposable, TextEditor} = require 'atom'
-{ScopeSelector} = require 'first-mate'
+{Selector} = require 'selector-kit'
+{selectorsMatchScopes} = require './scope-helper'
 
 module.exports =
 class Smartchr
@@ -94,7 +95,7 @@ class Smartchr
     return false unless chr.length is 1
     return false if @editor.hasMultipleCursors()
     return false unless @characters.hasOwnProperty(chr)
-    return false if @scopeSelector?.matches(@getAfterInsertScopes(chr))
+    return false if selectorsMatchScopes(@scopeSelectors, @getAfterInsertScopes(chr))
     true
 
   getAfterInsertScopes: (chr) =>
@@ -131,4 +132,4 @@ class Smartchr
       @characters[obj.chr] = obj.candidates
 
   updateScopeBlacklist: (scopes) =>
-    @scopeSelector = new ScopeSelector(scopes.join(' | '))
+    @scopeSelectors = Selector.create(scopes)
