@@ -1,3 +1,6 @@
+## 0.3.2
+* Add spec
+
 ## 0.3.1
 * Replace first-mate with selector-kit
 

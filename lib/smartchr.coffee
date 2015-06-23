@@ -128,6 +128,7 @@ class Smartchr
     @cursorPositionSubscription = null
 
   updateCharacters: (chrs) =>
+    @characters = {}
     chrs.forEach (obj) =>
       @characters[obj.chr] = obj.candidates
 
