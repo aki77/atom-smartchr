@@ -71,3 +71,19 @@ describe 'Smartchr', ->
       expect(otherEditor.getText()).toEqual('=')
       otherEditor.insertText('=')
       expect(otherEditor.getText()).toEqual('==')
+
+    it 'scopeBlacklist', ->
+      atom.config.set('smartchr.chrs', [
+        {
+          chr: '='
+          candidates: [' = ', ' == ', '=']
+        }
+      ], scopeSelector: '.source.coffee')
+
+      editor.insertText('=')
+      expect(editor.getText()).toEqual(' = ')
+
+      editor.setText('str = "str"')
+      editor.setCursorBufferPosition([0, 8])
+      editor.insertText('=')
+      expect(editor.getText()).toEqual('str = "s=tr"')

@@ -1,6 +1,6 @@
 {CompositeDisposable, TextEditor} = require 'atom'
 {Selector} = require 'selector-kit'
-{selectorsMatchScopes} = require './scope-helper'
+{selectorsMatchScopeChain} = require './scope-helpers'
 
 module.exports =
 class Smartchr
@@ -95,14 +95,14 @@ class Smartchr
     return false unless chr.length is 1
     return false if @editor.hasMultipleCursors()
     return false unless @characters.hasOwnProperty(chr)
-    return false if selectorsMatchScopes(@scopeSelectors, @getAfterInsertScopes(chr))
+    return false if selectorsMatchScopeChain(@scopeSelectors, @getAfterInsertScopeChain(chr))
     true
 
-  getAfterInsertScopes: (chr) =>
+  getAfterInsertScopeChain: (chr) =>
     scopes = []
     @transact =>
       @editor.insertText(chr)
-      scopes = @editor.getLastCursor().getScopeDescriptor().getScopesArray()
+      scopes = @editor.getLastCursor().getScopeDescriptor().getScopeChain()
       @editor.abortTransaction()
     scopes
 

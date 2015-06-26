@@ -1,3 +1,6 @@
+## 0.3.3
+* Fix scopeBlacklist bug
+
 ## 0.3.2
 * Add spec
 
