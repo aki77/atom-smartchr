@@ -1,4 +1,4 @@
-{CompositeDisposable, TextEditor} = require 'atom'
+{CompositeDisposable} = require 'atom'
 {Selector} = require 'selector-kit'
 {selectorsMatchScopeChain} = require './scope-helpers'
 
@@ -55,8 +55,13 @@ class Smartchr
     @editorSubscriptions.add atom.config.observe 'smartchr.scopeBlacklist', options, @updateScopeBlacklist
 
   paneItemIsValid: (paneItem) ->
-    return false unless paneItem?
-    return paneItem instanceof TextEditor
+    # TODO: remove conditional when `isTextEditor` is shipped.
+    if typeof atom.workspace.isTextEditor is 'function'
+      atom.workspace.isTextEditor(paneItem)
+    else
+      return false unless paneItem?
+      # Should we disqualify TextEditors with the Grammar text.plain.null-grammar?
+      paneItem.getText?
 
   onInsertText: ({text, cancel}) =>
     return if @insertFlag

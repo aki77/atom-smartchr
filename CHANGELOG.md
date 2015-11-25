@@ -1,3 +1,6 @@
+## 0.3.4
+* Fix deprecated calls
+
 ## 0.3.3
 * Fix scopeBlacklist bug
 
